@@ -1,5 +1,4 @@
 package com.accelq.csma_portal.Assessment;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import com.accelq.csma_portal.DTO.AssessmentDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "api/assessments")
 public class AssessmentController {
 
