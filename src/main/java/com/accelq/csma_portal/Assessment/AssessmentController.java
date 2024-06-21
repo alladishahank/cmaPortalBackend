@@ -1,5 +1,6 @@
 package com.accelq.csma_portal.Assessment;
 import com.accelq.csma_portal.DTO.AssessmentDetailsDTO;
+import com.accelq.csma_portal.DTO.ViewFullAssessmentDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +46,10 @@ public class AssessmentController {
     @GetMapping(path = "/details")
     public List<AssessmentDetailsDTO> getAllAssessmentDetails() {
         return assessmentService.getAllAssessmentDetails();
+    }
+
+    @GetMapping("/fullDetails")
+    public List<ViewFullAssessmentDetailsDTO> getAllAssessmentFullDetails() {
+        return assessmentService.getAllAssessmentFullDetails();
     }
 }

@@ -1,9 +1,6 @@
 package com.accelq.csma_portal.Customer;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
@@ -13,14 +10,18 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String email;
-    private String tenant_id; // Change to String
+
+    @JoinColumn(name = "point_of_contact_email", nullable = false)
+    @JsonProperty("point_of_contact_email")
+    private String point_of_contact_email;
+
+    private String tenant_id;
     private Date subscriptionStartDate;
 
-    public Customer(Integer id, String name, String email, String tenant_id, Date subscriptionStartDate) {
+    public Customer(Integer id, String name, String point_of_contact_email, String tenant_id, Date subscriptionStartDate) {
         this.id = id;
         this.name = name;
-        this.email = email;
+        this.point_of_contact_email = point_of_contact_email;
         this.tenant_id = tenant_id;
         this.subscriptionStartDate = subscriptionStartDate;
     }
@@ -44,11 +45,11 @@ public class Customer {
     }
 
     public String getEmail() {
-        return email;
+        return point_of_contact_email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.point_of_contact_email = email;
     }
 
     public String getTenant_id() {

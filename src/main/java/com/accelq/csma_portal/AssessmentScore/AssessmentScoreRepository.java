@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface AssessmentScoreRepository extends JpaRepository<AssessmentScore, Integer> {
     List<AssessmentScore> findByAssessmentId(Integer assessmentId);
+
+
 }

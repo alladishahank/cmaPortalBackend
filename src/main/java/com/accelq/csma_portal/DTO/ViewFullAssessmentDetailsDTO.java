@@ -1,8 +1,9 @@
 package com.accelq.csma_portal.DTO;
 
 import java.time.LocalDate;
+import java.util.List;
 
-public class AssessmentDetailsDTO {
+public class ViewFullAssessmentDetailsDTO {
     private Integer id;
     private String assessmentName;
     private String customerName;
@@ -10,8 +11,10 @@ public class AssessmentDetailsDTO {
     private String assessorName;
     private LocalDate assessmentDate;
     private Double amaScore;
+    private List<DetailedAssessmentScoreDTO> assessmentScores;
 
     // Getters and Setters
+
     public Integer getId() {
         return id;
     }
@@ -66,5 +69,13 @@ public class AssessmentDetailsDTO {
 
     public void setAmaScore(Double amaScore) {
         this.amaScore = amaScore;
+    }
+
+    public List<DetailedAssessmentScoreDTO> getAssessmentScores() {
+        return assessmentScores;
+    }
+
+    public void setAssessmentScores(List<DetailedAssessmentScoreDTO> assessmentScores) {
+        this.assessmentScores = assessmentScores;
     }
 }
