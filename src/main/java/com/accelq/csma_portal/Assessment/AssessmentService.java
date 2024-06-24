@@ -1,15 +1,15 @@
 package com.accelq.csma_portal.Assessment;
 
+import com.accelq.csma_portal.AssessmentScore.AssessmentScore;
 import com.accelq.csma_portal.DTO.AssessmentDetailsDTO;
 import com.accelq.csma_portal.DTO.DetailedAssessmentScoreDTO;
 import com.accelq.csma_portal.DTO.ViewFullAssessmentDetailsDTO;
+import com.accelq.csma_portal.Parameter.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.accelq.csma_portal.AssessmentScore.AssessmentScoreRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Service
@@ -95,7 +95,6 @@ public class AssessmentService {
         return detailsDTO;
     }
 
-    // Private method to convert Assessment to ViewFullAssessmentDetailsDTO
     private ViewFullAssessmentDetailsDTO convertToViewFullAssessmentDetailsDTO(Assessment assessment) {
         ViewFullAssessmentDetailsDTO detailsDTO = new ViewFullAssessmentDetailsDTO();
         detailsDTO.setId(assessment.getId());  // Ensure this is correctly setting the ID
@@ -109,7 +108,7 @@ public class AssessmentService {
         List<DetailedAssessmentScoreDTO> scoreDetails = new ArrayList<>();
         Integer assessmentId = assessment.getId();
         LOGGER.info("Fetching scores for assessment ID: " + assessmentId);
-        assessmentScoreRepository.findByAssessmentId(assessmentId).forEach(score -> {
+        assessmentScoreRepository.findByAssessmentIdOrderByParameterId(assessmentId).forEach(score -> {
             DetailedAssessmentScoreDTO scoreDetailDTO = new DetailedAssessmentScoreDTO();
             scoreDetailDTO.setParameterId(score.getParameter().getId());
             scoreDetailDTO.setParameterName(score.getParameter().getName());
@@ -121,4 +120,42 @@ public class AssessmentService {
         detailsDTO.setAssessmentScores(scoreDetails);
         return detailsDTO;
     }
+
+    public void updateAMAScore(Integer assessmentId) {
+        List<AssessmentScore> scores = assessmentScoreRepository.findByAssessmentIdOrderByParameterId(assessmentId);
+        double totalWeightedScore = 0.0;
+        double totalWeight = 0.0;
+
+        LOGGER.info("Starting AMA score calculation for assessment ID: " + assessmentId);
+
+        // Collect scores and weights for each parameter
+        for (AssessmentScore score : scores) {
+            Parameter parameter = score.getParameter();
+            double parameterScore = score.getScore();
+            double parameterWeight = parameter.getCategory().getWeight(); // Use the weight of the category
+
+            LOGGER.info("Parameter ID: " + parameter.getId() + ", Parameter Score: " + parameterScore + ", Category Weight: " + parameterWeight);
+
+            totalWeightedScore += parameterScore * parameterWeight;
+            totalWeight += parameterWeight;
+        }
+
+        LOGGER.info("Total Weighted Score: " + totalWeightedScore);
+        LOGGER.info("Total Weight: " + totalWeight);
+
+        // Calculate AMA score
+        double amaScore = totalWeightedScore / totalWeight;
+        amaScore = Math.round(amaScore * 10.0) / 10.0;
+
+        LOGGER.info("Calculated AMA Score: " + amaScore);
+
+        // Update the assessment with the new AMA score
+        Assessment assessment = assessmentRepository.findById(assessmentId)
+                .orElseThrow(() -> new IllegalStateException("Assessment with id " + assessmentId + " does not exist."));
+        assessment.setAmaScore(amaScore);
+
+        LOGGER.info("Saving updated AMA score for assessment ID: " + assessmentId + ", AMA Score: " + amaScore);
+        assessmentRepository.save(assessment);
+    }
+
 }
